@@ -671,6 +671,22 @@ def create_multiscale_flow():
     flow_model = ImageFlow(flow_layers).to(device)
     return flow_model
 
+def create_tiny_flow():
+    flow_layers = []
+
+    # Minimal dequantization layer
+    vardeq_layers = [CouplingLayer(network=GatedConvNet(c_in=1, c_out=1, c_hidden=8),
+                                   mask=create_checkerboard_mask(h=28, w=28, invert=False),
+                                   c_in=1)]
+    flow_layers += [VariationalDequantization(vardeq_layers)]
+
+    # Single coupling layer
+    flow_layers += [CouplingLayer(network=GatedConvNet(c_in=1, c_hidden=8),
+                                  mask=create_checkerboard_mask(h=28, w=28, invert=False),
+                                  c_in=1)]
+
+    flow_model = ImageFlow(flow_layers).to(device)
+    return flow_model
 
 # In[35]:
 
@@ -684,11 +700,14 @@ print_num_params(create_multiscale_flow())
 
 # In[36]:
 
+CHECKPOINT_PATH = "/home/yang.soph/ML-Research-2025"
 
 flow_dict = {"simple": {}, "vardeq": {}, "multiscale": {}}
-flow_dict["multiscale"]["model"], flow_dict["multiscale"]["result"] = train_flow(create_multiscale_flow(), model_name="MNISTFlow_multiscale")
+#flow_dict["multiscale"]["model"], flow_dict["multiscale"]["result"] = train_flow(create_multiscale_flow(), model_name="MNISTFlow_multiscale")
+flow_dict["tiny"]["model"], flow_dict["tiny"]["result"] = train_flow(create_tiny_flow(), model_name="MNISTFlow_tiny")
 
-trainer.save_checkpoint("trained_flow.ckpt")
+torch.save(flow_dict["tiny"]["model"].state_dict(), os.path.join(CHECKPOINT_PATH, "MNISTFlow_tiny.ckpt"))
+#trainer.save_checkpoint("trained_flow.ckpt")
 
 # In[ ]:
 
