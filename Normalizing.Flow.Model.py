@@ -650,19 +650,21 @@ def create_multiscale_flow():
     flow_model = ImageFlow(flow_layers).to(device)
     return flow_model
 
-def create_tiny_flow():
+def create_tiny_flow(use_vardeq=True):
+#def create_simple_flow(use_vardeq=True):
     flow_layers = []
+    if use_vardeq:
+        vardeq_layers = [CouplingLayer(network=GatedConvNet(c_in=2, c_out=2, c_hidden=16),
+                                       mask=create_checkerboard_mask(h=28, w=28, invert=(i%2==1)),
+                                       c_in=1) for i in range(4)]
+        flow_layers += [VariationalDequantization(var_flows=vardeq_layers)]
+    else:
+        flow_layers += [Dequantization()]
 
-    # Minimal dequantization layer
-    vardeq_layers = [CouplingLayer(network=GatedConvNet(c_in=1, c_out=1, c_hidden=8),
-                                   mask=create_checkerboard_mask(h=28, w=28, invert=False),
-                                   c_in=1)]
-    flow_layers += [VariationalDequantization(vardeq_layers)]
-
-    # Single coupling layer
-    flow_layers += [CouplingLayer(network=GatedConvNet(c_in=1, c_hidden=8),
-                                  mask=create_checkerboard_mask(h=28, w=28, invert=False),
-                                  c_in=1)]
+    for i in range(8):
+        flow_layers += [CouplingLayer(network=GatedConvNet(c_in=1, c_hidden=32),
+                                      mask=create_checkerboard_mask(h=28, w=28, invert=(i%2==1)),
+                                      c_in=1)]
 
     flow_model = ImageFlow(flow_layers).to(device)
     return flow_model
