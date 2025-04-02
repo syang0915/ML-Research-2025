@@ -142,27 +142,6 @@ test_loader = data.DataLoader(test_set, batch_size=64, shuffle=False, drop_last=
 
 # In[11]:
 
-
-def show_imgs(imgs, row_size=4):
-    # simplify visualization of images/samples 
-    num_imgs = imgs.shape[0] if isinstance(imgs, torch.Tensor) else len(imgs)
-    is_int = imgs.dtype==torch.int32 if isinstance(imgs, torch.Tensor) else imgs[0].dtype==torch.int32
-    nrow = min(num_imgs, row_size)
-    ncol = int(math.ceil(num_imgs/nrow))
-    imgs = torchvision.utils.make_grid(imgs, nrow=nrow, pad_value=128 if is_int else 0.5)
-    np_imgs = imgs.cpu().numpy()
-
-    plt.figure(figsize=(1.5*nrow, 1.5*ncol))
-    plt.imshow(np.transpose(np_imgs, (1,2,0)), interpolation='nearest')
-    plt.axis('off')
-    if title is not None:
-        plt.title(title)
-    plt.show()
-    plt.close()
-
-show_imgs([train_set[i][0] for i in range(8)])
-
-
 # # Actual Model Class
 
 # In[12]:
