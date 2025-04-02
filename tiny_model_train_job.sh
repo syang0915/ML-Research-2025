@@ -11,4 +11,4 @@
 
 module load anaconda3/2022.05 cuda/12.1
 source activate /home/yang.soph/envs/pytorch_env
-python /home/yang.soph/ML-Research-2025/Normalizing.Flow.Model.py
+python /home/yang.soph/ML-Research-2025/Normalizing.Flow.Model.py --flow_type tiny
