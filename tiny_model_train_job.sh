@@ -1,11 +1,10 @@
 #!/bin/bash
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:v100-pcie:1
+#SBATCH --gres=gpu:v100-sxm2:1
 #SBATCH --time=00:30:00
 #SBATCH --job-name=mini_flow
 #SBATCH --mem=10GB
-#SBATCH --ntasks=1
 #SBATCH --output=train.%j.out
 #SBATCH --error=train.%j.err
 
