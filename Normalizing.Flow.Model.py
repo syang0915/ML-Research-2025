@@ -691,23 +691,33 @@ def create_tiny_flow():
 # In[35]:
 
 
-def print_num_params(model):
-    num_params = sum([np.prod(p.shape) for p in model.parameters()])
-    print("Number of parameters: {:,}".format(num_params))
+# def print_num_params(model):
+#     num_params = sum([np.prod(p.shape) for p in model.parameters()])
+#     print("Number of parameters: {:,}".format(num_params))
 
-print_num_params(create_multiscale_flow())
+# print_num_params(create_multiscale_flow())
 
 
 # In[36]:
 
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--flow_type", type=str, choices=["tiny", "multiscale"], required=True)
+args = parser.parse_args()
+
 CHECKPOINT_PATH = "/home/yang.soph/ML-Research-2025"
+flow_dict = {}
 
-flow_dict = {"simple": {}, "vardeq": {}, "multiscale": {}}
-#flow_dict["multiscale"]["model"], flow_dict["multiscale"]["result"] = train_flow(create_multiscale_flow(), model_name="MNISTFlow_multiscale")
-flow_dict["tiny"]["model"], flow_dict["tiny"]["result"] = train_flow(create_tiny_flow(), model_name="MNISTFlow_tiny")
+if args.flow_type == "tiny":
+    flow_dict["tiny"] = {}
+    flow_dict["tiny"]["model"], flow_dict["tiny"]["result"] = train_flow(create_tiny_flow(), model_name="MNISTFlow_tiny")
+    torch.save(flow_dict["tiny"]["model"].state_dict(), os.path.join(CHECKPOINT_PATH, "MNISTFlow_tiny.ckpt"))
 
-torch.save(flow_dict["tiny"]["model"].state_dict(), os.path.join(CHECKPOINT_PATH, "MNISTFlow_tiny.ckpt"))
-#trainer.save_checkpoint("trained_flow.ckpt")
+elif args.flow_type == "multiscale":
+    flow_dict["multiscale"] = {}
+    flow_dict["multiscale"]["model"], flow_dict["multiscale"]["result"] = train_flow(create_multiscale_flow(), model_name="MNISTFlow_multiscale")
+    torch.save(flow_dict["multiscale"]["model"].state_dict(), os.path.join(CHECKPOINT_PATH, "MNISTFlow_multiscale.ckpt"))
 
 # In[ ]:
 
