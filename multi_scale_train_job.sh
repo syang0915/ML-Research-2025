@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --partition=gpu
 #SBATCH --nodes=1
-#SBATCH --gres=gpu:v100-pcie:1
+#SBATCH --gres=gpu:v100-sxm2:1
 #SBATCH --time=08:00:00
 #SBATCH --job-name=mini_flow
 #SBATCH --mem=10GB
