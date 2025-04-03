@@ -96,7 +96,7 @@ pl.seed_everything(42)
 
 # In[5]:
 
-
+import urllib
 from urllib.error import HTTPError
 
 base_url = "https://raw.githubusercontent.com/phlippe/saved_models/main/tutorial11/"
