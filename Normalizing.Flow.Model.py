@@ -534,12 +534,12 @@ class GatedConvNet(nn.Module):
 # In[22]:
 
 
-def train_flow(flow, model_name="MNISTFlow"):
+def train_flow(flow, model_name="MNISTFlow", epochs=200):
     # Create a PyTorch Lightning trainer
     trainer = pl.Trainer(default_root_dir=os.path.join(CHECKPOINT_PATH, model_name),
                          accelerator="gpu" if str(device).startswith("cuda") else "cpu",
                          devices=1,
-                         max_epochs=200,
+                         max_epochs=epochs,
                          gradient_clip_val=1.0,
                          callbacks=[ModelCheckpoint(save_weights_only=True, mode="min", monitor="val_bpd"),
                                     LearningRateMonitor("epoch")],
@@ -692,7 +692,7 @@ flow_dict = {}
 
 if args.flow_type == "tiny":
     flow_dict["tiny"] = {}
-    flow_dict["tiny"]["model"], flow_dict["tiny"]["result"] = train_flow(create_tiny_flow(), model_name="MNISTFlow_tiny")
+    flow_dict["tiny"]["model"], flow_dict["tiny"]["result"] = train_flow(create_tiny_flow(), model_name="MNISTFlow_tiny", epochs=1)
     torch.save(flow_dict["tiny"]["model"].state_dict(), os.path.join(CHECKPOINT_PATH, "MNISTFlow_tiny.ckpt"))
 
 elif args.flow_type == "multiscale":
